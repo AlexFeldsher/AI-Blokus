@@ -75,6 +75,8 @@ def depth_first_search(problem):
             return actions
         elif current not in closed:
             for successor, action, _ in problem.get_successors(current):
+                if successor in closed:
+                    continue
                 fringe.push((successor, actions + [action]))
             closed.add(current)
 
@@ -89,12 +91,16 @@ def breadth_first_search(problem):
     fringe.push((problem.get_start_state(), list()))
     closed = set()
 
+    counter = 0
     while not fringe.isEmpty():
         current, actions = fringe.pop()
         if problem.is_goal_state(current):
             return actions
         elif current not in closed:
+            counter += 1
             for successor, action, _ in problem.get_successors(current):
+                if successor in closed:
+                    continue
                 fringe.push((successor, actions + [action]))
             closed.add(current)
 
@@ -117,6 +123,8 @@ def uniform_cost_search(problem):
             return actions_dict[current]
         elif current not in closed:
             for successor, action, _ in problem.get_successors(current):
+                if successor in closed:
+                    continue
                 actions = actions_dict[current] + [action]
                 fringe.push(successor, problem.get_cost_of_actions(actions))
                 actions_dict[successor] = actions
@@ -135,9 +143,25 @@ def a_star_search(problem, heuristic=null_heuristic):
     """
     Search the node that has the lowest combined cost and heuristic first.
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = util.PriorityQueue()
+    fringe.push(problem.get_start_state(), 0)
+    closed = set()
+    actions_dict = dict()
+    actions_dict[problem.get_start_state()] = list()
 
+    while not fringe.isEmpty():
+        current = fringe.pop()
+        if problem.is_goal_state(current):
+            return actions_dict[current]
+        elif current not in closed:
+            for successor, action, _ in problem.get_successors(current):
+                if successor in closed:
+                    continue
+                actions = actions_dict[current] + [action]
+                cost = problem.get_cost_of_actions(actions) + heuristic(successor, problem)
+                fringe.push(successor, cost)
+                actions_dict[successor] = actions
+            closed.add(current)
 
 
 # Abbreviations
