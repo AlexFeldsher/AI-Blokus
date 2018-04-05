@@ -129,7 +129,7 @@ class BlokusCoverProblem(SearchProblem):
     def __init__(self, board_w, board_h, piece_list, starting_point=(0, 0), targets=[(0, 0)]):
         self.targets = targets.copy()
         self.expanded = 0
-        "*** YOUR CODE HERE ***"
+        self.board = Board(board_w, board_h, 1, piece_list, starting_point)
 
     def get_start_state(self):
         """
@@ -139,7 +139,10 @@ class BlokusCoverProblem(SearchProblem):
 
     def is_goal_state(self, state):
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        for height, width in self.targets:
+            if state.state[height][width] == -1:
+                return False
+        return True
 
     def get_successors(self, state):
         """
@@ -162,8 +165,10 @@ class BlokusCoverProblem(SearchProblem):
         This method returns the total cost of a particular sequence of actions.  The sequence must
         be composed of legal moves
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        cost = 0
+        for action in actions:
+            cost += action.piece.get_num_tiles()
+        return cost
 
 
 def blokus_cover_heuristic(state, problem):
