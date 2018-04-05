@@ -49,8 +49,6 @@ class SearchProblem:
         util.raiseNotDefined()
 
 
-
-
 def depth_first_search(problem):
     """
     Search the deepest nodes in the search tree first.
@@ -105,8 +103,24 @@ def uniform_cost_search(problem):
     """
     Search the node of least total cost first.
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # fringe is a stack of tuples (state,  actions)
+    # actions is a list of actions that led to that state from the start
+    fringe = util.PriorityQueue()
+    fringe.push(problem.get_start_state(), 0)
+    closed = set()
+    actions_dict = dict()
+    actions_dict[problem.get_start_state()] = list()
+
+    while not fringe.isEmpty():
+        current = fringe.pop()
+        if problem.is_goal_state(current):
+            return actions_dict[current]
+        elif current not in closed:
+            for successor, action, _ in problem.get_successors(current):
+                actions = actions_dict[current] + [action]
+                fringe.push(successor, problem.get_cost_of_actions(actions))
+                actions_dict[successor] = actions
+            closed.add(current)
 
 
 def null_heuristic(state, problem=None):
