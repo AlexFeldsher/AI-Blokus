@@ -129,6 +129,7 @@ def uniform_cost_search(problem):
                 fringe.push(successor, problem.get_cost_of_actions(actions))
                 actions_dict[successor] = actions
             closed.add(current)
+            del actions_dict[current]
 
 
 def null_heuristic(state, problem=None):
@@ -162,6 +163,7 @@ def a_star_search(problem, heuristic=null_heuristic):
                 fringe.push(successor, cost)
                 actions_dict[successor] = actions
             closed.add(current)
+            del actions_dict[current]
 
 
 # Abbreviations

@@ -59,11 +59,13 @@ class BlokusCornersProblem(SearchProblem):
     board = None
     expanded = None
     goals = None
+    start_pos = None
 
     def __init__(self, board_w, board_h, piece_list, starting_point=(0, 0)):
         self.board = Board(board_w, board_h, 1, piece_list, starting_point)
         self.expanded = 0
         self.goals = [(0, 0), (board_h-1, 0), (0, board_w-1), (board_h-1, board_w-1)]
+        self.start_pos = starting_point
 
     def get_start_state(self):
         """
@@ -116,13 +118,31 @@ def blokus_corners_heuristic(state, problem):
     your heuristic is *not* consistent, and probably not admissible!  On the other hand,
     inadmissible or inconsistent heuristics may find optimal solutions, so be careful.
     """
-    # TODO: basic heuristic, can do better
-    counter = 4
+    import numpy as np
+    targets = list()
+
+    # find remaining targets
     for goal in problem.goals:
         height, width = goal
-        if state.state[height][width] != -1:
-            counter -= 1
-    return counter
+        if state.state[height][width] == -1:
+            targets.append(goal)
+
+    # find the minimal straight line distances to all the targets from the give state
+    # distance calculated as sqrt((x-x_0)^2 + (y-y_0)^2)
+    dist = np.sqrt(np.power(state.board_h, 2) + np.power(state.board_w, 2))
+    distance_vec = [dist for i in range(len(targets))] # initialize with high values
+    for height in range(state.board_h):
+        for width in range(state.board_w):
+            if state.state[height][width] != -1:
+                for num, (i, j) in enumerate(targets):
+                    new_dist = np.sqrt(np.power(height-i, 2) + np.power(width-j, 2))
+                    if new_dist < distance_vec[num]:
+                        distance_vec[num] = new_dist
+    # sum all the distances
+    total_distance = 0
+    for val in distance_vec:
+        total_distance += np.ceil(val)
+    return total_distance
 
 
 class BlokusCoverProblem(SearchProblem):
