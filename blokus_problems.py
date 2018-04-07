@@ -128,20 +128,18 @@ def blokus_corners_heuristic(state, problem):
             targets.append(goal)
 
     # find the minimal straight line distances to all the targets from the give state
-    # distance calculated as sqrt((x-x_0)^2 + (y-y_0)^2)
-    dist = np.sqrt(np.power(state.board_h, 2) + np.power(state.board_w, 2))
+    # distance calculated with manhattan distance
+    dist = np.ceil(np.sqrt(np.power(state.board_h, 2) + np.power(state.board_w, 2)))
     distance_vec = [dist for i in range(len(targets))] # initialize with high values
     for height in range(state.board_h):
         for width in range(state.board_w):
             if state.state[height][width] != -1:
                 for num, (i, j) in enumerate(targets):
-                    new_dist = np.sqrt(np.power(height-i, 2) + np.power(width-j, 2))
+                    new_dist = np.abs(height-i) + np.abs(width-j)
                     if new_dist < distance_vec[num]:
                         distance_vec[num] = new_dist
     # sum all the distances
-    total_distance = 0
-    for val in distance_vec:
-        total_distance += np.ceil(val)
+    total_distance = sum(distance_vec)
     return total_distance
 
 
