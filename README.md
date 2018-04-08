@@ -77,7 +77,20 @@
 ![COVER_OPT](https://i.imgur.com/aQJKOmP.png)
 
 ## Closest point (2 points)
-TODO
+`python3 game.py -p valid_pieces.txt -s 10 10 -z sub-optimal -x 7 7 "[(5,5), (8,8), (4,9)]"`
 
+**Expanded nodes: 21, score: 9**
+
+Time: _7.85s user 0.13s system_
+
+![CLOSE_PT_1](https://i.imgur.com/hYqPyOn.png)
+
+`python3 game.py -p valid_pieces.txt -s 10 10 -z sub-optimal -x 5 5 "[(3,4), (6,6), (7,5)]"`
+
+**Expanded nodes: 17, score: 9**
+
+Time: _8.65s user 0.04s system_
+
+![CLOSE_PT_2](https://i.imgur.com/8YkbBOr.png)
 ##  Mini Contest (2 points extra credit) 
 TODO
