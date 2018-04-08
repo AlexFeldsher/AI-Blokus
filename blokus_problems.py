@@ -72,7 +72,7 @@ class BlokusCornersProblem(SearchProblem):
         return self.board
 
     def is_goal_state(self, state):
-        for height, width in self.goals:
+        for height, width in self.targets:
             if state.state[height][width] == -1:
                 return False
         return True
