@@ -58,14 +58,12 @@ class BlokusCornersProblem(SearchProblem):
 
     board = None
     expanded = None
-    goals = None
-    start_pos = None
+    targets = None
 
     def __init__(self, board_w, board_h, piece_list, starting_point=(0, 0)):
         self.board = Board(board_w, board_h, 1, piece_list, starting_point)
         self.expanded = 0
-        self.goals = [(0, 0), (board_h-1, 0), (0, board_w-1), (board_h-1, board_w-1)]
-        self.start_pos = starting_point
+        self.targets = [(0, 0), (board_h-1, 0), (0, board_w-1), (board_h-1, board_w-1)]
 
     def get_start_state(self):
         """
@@ -91,7 +89,7 @@ class BlokusCornersProblem(SearchProblem):
         """
         # Note that for the search problem, there is only one player - #0
         self.expanded = self.expanded + 1
-        return [(state.do_move(0, move), move, 1) for move in state.get_legal_moves(0)]
+        return [(state.do_move(0, move), move, move.piece.get_num_tiles()) for move in state.get_legal_moves(0)]
 
     def get_cost_of_actions(self, actions):
         """
@@ -122,7 +120,7 @@ def blokus_corners_heuristic(state, problem):
     targets = list()
 
     # find remaining targets
-    for goal in problem.goals:
+    for goal in problem.targets:
         height, width = goal
         if state.state[height][width] == -1:
             targets.append(goal)
@@ -190,9 +188,33 @@ class BlokusCoverProblem(SearchProblem):
 
 
 def blokus_cover_heuristic(state, problem):
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    import numpy as np
+    targets = list()
 
+    # find remaining targets
+    for goal in problem.targets:
+        height, width = goal
+        if state.state[height][width] == -1:
+            targets.append(goal)
+
+    # find the max straight line distances to all the targets from the give state
+    # distance calculated with manhattan distance
+    dist = state.board_h + state.board_w
+    distance_vec = [dist for i in range(len(targets))] # initialize with high values
+    for height in range(state.board_h):
+        for width in range(state.board_w):
+            if state.state[height][width] != -1:
+                for num, (i, j) in enumerate(targets):
+                    new_dist = np.abs(height-i) + np.abs(width-j)
+                    if new_dist < distance_vec[num]:
+                        distance_vec[num] = new_dist
+
+    # use the maximal distance
+    if distance_vec != []:
+        max_distance = sum(distance_vec)
+    else:
+        max_distance = 0
+    return max_distance
 
 class ClosestLocationSearch:
     """

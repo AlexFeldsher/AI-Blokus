@@ -48,6 +48,13 @@
 
 ![CORNERSH](https://i.imgur.com/WRKq8fB.png)
 
+### Optimal solution
+`python3 game.py -p tiny_set_2.txt -f ucs -s 8 8 -z corners`
+
+**Expanded nodes: 2538354, score: 24**
+
+![CORNEROPT](https://i.imgur.com/fSHTHNy.png)
+
 ## BlokusCoverProblem (2 points)
 `python3 game.py -p small_set.txt -f astar -s 6 6 -H null_heuristic -z cover -x 3 3 "[(2,2), (5, 5), (1, 4)]"`
 
@@ -56,7 +63,18 @@
 ![COVER](https://i.imgur.com/N3wVgh9.png)
 
 ## Blokus Cover Heuristic (6 points)
-TODO
+`python3 game.py -p small_set.txt -f astar -s 10 10 -H blokus_cover_heuristic -z cover -x 3 3 "[(2,2), (5, 5), (6, 7)]"`
+
+**Expanded nodes: 3, score: 8**
+
+![COVER_HEU](https://i.imgur.com/Ogxbkkq.png)
+
+### OPTIMAL
+`python3 game.py -p small_set.txt -f ucs -s 10 10 -z cover -x 3 3 "[(2,2), (5, 5), (6, 7)]"`
+
+**Expanded nodes: 25811, score: 8**
+
+![COVER_OPT](https://i.imgur.com/aQJKOmP.png)
 
 ## Closest point (2 points)
 TODO
