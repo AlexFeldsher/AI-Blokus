@@ -116,7 +116,6 @@ def blokus_corners_heuristic(state, problem):
     your heuristic is *not* consistent, and probably not admissible!  On the other hand,
     inadmissible or inconsistent heuristics may find optimal solutions, so be careful.
     """
-    import numpy as np
     targets = list()
 
     # find remaining targets
@@ -129,16 +128,47 @@ def blokus_corners_heuristic(state, problem):
     # distance calculated with manhattan distance
     dist = state.board_h + state.board_w
     distance_vec = [dist for i in range(len(targets))] # initialize with high values
-    for height in range(state.board_h):
-        for width in range(state.board_w):
-            if state.state[height][width] != -1:
-                for num, (i, j) in enumerate(targets):
-                    new_dist = np.abs(height-i) + np.abs(width-j)
-                    if new_dist < distance_vec[num]:
-                        distance_vec[num] = new_dist
+    # iterate over valid "start positions"
+    for height, width in _new_start(state):
+        for num, (i, j) in enumerate(targets):
+            # +1 to add the cost of the start position cell
+            new_dist = abs(height-i) + abs(width-j) + 1
+            if new_dist < distance_vec[num]:
+                distance_vec[num] = new_dist
     # sum all the distance BlokusCoverProblem(self.board.board_w, self.board.board_h,
     total_distance = sum(distance_vec)
     return total_distance
+
+def _get_corners(x, y, state):
+    ''' Returns a list of valid corner position states on the board for the give (x,y) position
+        if a corner is occupied the list will contain a non -1 value'''
+    all_corners = [(x-1, y-1), (x-1, y+1), (x+1, y-1), (x+1, y+1)]
+    # valid sides are position that don't step beyond the board size
+    valid_corners = [i for i in all_corners if i[0] >= 0 and i[1] >= 0 and i[0] < state.board_h and i[1] < state.board_w]
+    return [state.state[i][j] for i,j in valid_corners]
+
+def _get_sides(x, y, state):
+    ''' Returns a list of valid side position states on the board for the give (x,y) position
+        if a side is occupied the list will contain a non -1 value'''
+    all_sides = [(x, y-1), (x, y+1), (x+1, y), (x-1, y)]
+    # valid sides are position that don't step beyond the board size
+    valid_sides = [i for i in all_sides if i[0] >= 0 and i[1] >= 0 and i[0] < state.board_h and i[1] < state.board_w]
+    return [state.state[i][j] for i,j in valid_sides]
+
+def _new_start(state):
+    ''' Iterator that returns valid board start positions for the given state
+        Valid board start positions are positions where it's legal to place a piece of size 1 '''
+    for i in range(state.board_h):
+        for j in range(state.board_w):
+            # if current board position is occupied, skip
+            if state.state[i][j] != -1:
+                continue
+            corners = _get_corners(i, j, state)
+            sides = _get_sides(i, j, state)
+
+            # if atleast one corner is occupied and no side is occupuied
+            if 0 in corners and 0 not in sides:
+                yield (i, j)
 
 
 class BlokusCoverProblem(SearchProblem):

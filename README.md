@@ -44,9 +44,9 @@
 ## Blokus Corners Heuristic (4 points)
 `python3 game.py -p tiny_set_2.txt -f astar -s 8 8 -z corners -H blokus_corners_heuristic `
 
-**Expanded nodes: 20, score: 24**
+**Expanded nodes: 3245, score: 24**
 
-![CORNERSH](https://i.imgur.com/WRKq8fB.png)
+![CORNERSH](https://i.imgur.com/VNko59u.png)
 
 ### Optimal solution
 `python3 game.py -p tiny_set_2.txt -f ucs -s 8 8 -z corners`
