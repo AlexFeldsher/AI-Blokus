@@ -44,9 +44,15 @@
 ## Blokus Corners Heuristic (4 points)
 `python3 game.py -p tiny_set_2.txt -f astar -s 8 8 -z corners -H blokus_corners_heuristic `
 
-**Expanded nodes: 3245, score: 24**
+* מחפש פינות של כלים לידם אפשר להניח כלי חדש.
+	* מודד את המרחק לקצוות הלוח עבור כל נקודה חוקית.
+	* מחזיר את הסכום המרחקים המינימלי.
+* סוכם את גודל הכלים הפנויים למשחק.
+	* אם הסכום קטן מהמרחק המינימלי שמצאנו מגדירים את המרחק לפתרון הבעיה כאינסוף.
 
-![CORNERSH](https://i.imgur.com/VNko59u.png)
+**Expanded nodes: 2726, score: 24**
+
+![CORNERSH](https://i.imgur.com/dONwQng.png)
 
 ### Optimal solution
 `python3 game.py -p tiny_set_2.txt -f ucs -s 8 8 -z corners`
@@ -65,6 +71,12 @@
 ## Blokus Cover Heuristic (6 points)
 `python3 game.py -p small_set.txt -f astar -s 10 10 -H blokus_cover_heuristic -z cover -x 3 3 "[(2,2), (5, 5), (6, 7)]"`
 
+* מחפש פינות של כלים לידם אפשר להניח כלי חדש.
+* מודד את המרחק לנקודות הכיסוי עבור כל נקודה התחלה חוקית.
+* שומר את המרחקים המינימליים לכל נקודת כיסוי.
+* מחזיר את המרחק המקסימלי מבין אלה שנמצאו.
+בגלל שנקודות הכיסוי יכולות להתחבא אחת מאחורי השנייה, סכימה של המרחקים יכולה להוביל להיוריסטיקה לא להיות אדמיסבילית. כדי לפתור את הבעיה, פשוט נשתמש במרחק לנקודת הכיסוי הכי רחוקה.
+
 **Expanded nodes: 29, score: 8**
 
 ![COVER_HEU](https://i.imgur.com/Wp4NxoE.png)
@@ -78,6 +90,12 @@
 
 ## Closest point (2 points)
 `python3 game.py -p valid_pieces.txt -s 10 10 -z sub-optimal -x 7 7 "[(5,5), (8,8), (4,9)]"`
+
+* מחפש את הנקודת הכיסוי הקרובה לנקודת ההתחלה המוגדרת.
+* מגדיר בעיית כיסוי חדשה בעלת נקודת כיסוי אחת ונקודת התחלה.
+* פותר את הבעיה עם ucs ומקבל רשימה של פעולות.
+* יוצר state חדש עם הפעולות ומחפש נקודת התחלה חוקית ואת הנקודת הכיסוי הקרובה אליה.
+* חוזר חלילה על שנגמרו נקודות הכיסוי.
 
 **Expanded nodes: 21, score: 9**
 

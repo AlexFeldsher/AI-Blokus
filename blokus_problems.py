@@ -116,6 +116,7 @@ def blokus_corners_heuristic(state, problem):
     your heuristic is *not* consistent, and probably not admissible!  On the other hand,
     inadmissible or inconsistent heuristics may find optimal solutions, so be careful.
     """
+    INFTY = state.board_h*state.board_w 
     targets = list()
 
     # find remaining targets
@@ -137,6 +138,16 @@ def blokus_corners_heuristic(state, problem):
                 distance_vec[num] = new_dist
     # sum all the distance BlokusCoverProblem(self.board.board_w, self.board.board_h,
     total_distance = sum(distance_vec)
+
+    # measure the distance the remaining pieces can travel
+    # in the best case senario
+    reach = 0
+    for piece in state.piece_list:
+        piece_index = state.piece_list.pieces.index(piece)
+        if state.pieces[0, piece_index] == True:
+            reach += piece.get_num_tiles()
+    if reach < total_distance:
+        total_distance = INFTY
     return total_distance
 
 def _get_corners(x, y, state):
@@ -331,7 +342,7 @@ class ClosestLocationSearch:
                 points.append(goal)
 
         dist = state.board_h + state.board_w
-        distance_vec = [dist for i in range(len(points))] # initialize with high values
+        distance_vec = [dist for pnt in points] # initialize with high values
         for height, width in _new_start(state):
             if state.state[height][width] != -1:
                 for num, (i, j) in enumerate(points):
