@@ -65,9 +65,9 @@
 ## Blokus Cover Heuristic (6 points)
 `python3 game.py -p small_set.txt -f astar -s 10 10 -H blokus_cover_heuristic -z cover -x 3 3 "[(2,2), (5, 5), (6, 7)]"`
 
-**Expanded nodes: 3, score: 8**
+**Expanded nodes: 29, score: 8**
 
-![COVER_HEU](https://i.imgur.com/Ogxbkkq.png)
+![COVER_HEU](https://i.imgur.com/Wp4NxoE.png)
 
 ### OPTIMAL
 `python3 game.py -p small_set.txt -f ucs -s 10 10 -z cover -x 3 3 "[(2,2), (5, 5), (6, 7)]"`
