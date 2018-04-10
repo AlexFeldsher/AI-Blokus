@@ -81,7 +81,7 @@
 
 **Expanded nodes: 21, score: 9**
 
-Time: _7.85s user 0.13s system_
+Time: _13.30s user 0.22s system_
 
 ![CLOSE_PT_1](https://i.imgur.com/hYqPyOn.png)
 
@@ -89,7 +89,7 @@ Time: _7.85s user 0.13s system_
 
 **Expanded nodes: 17, score: 9**
 
-Time: _8.65s user 0.04s system_
+Time: _15.59s user 0.16s system_
 
 ![CLOSE_PT_2](https://i.imgur.com/8YkbBOr.png)
 ##  Mini Contest (2 points extra credit) 

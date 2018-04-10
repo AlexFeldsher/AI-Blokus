@@ -282,16 +282,14 @@ class ClosestLocationSearch:
 
         return backtrace
         """
-        import numpy as np
-        import search
         targets = self.targets[:]
         # find closest point to the start position
         start_h = self.start_pos[0]
         start_w = self.start_pos[1]
         min_dist_point = self.targets[0]
-        dist = np.abs(start_h-min_dist_point[0]) + np.abs(start_w-min_dist_point[1])
+        dist = abs(start_h-min_dist_point[0]) + abs(start_w-min_dist_point[1])
         for target in self.targets:
-            new_dist = np.abs(start_h-target[0]) + np.abs(start_w-target[1])
+            new_dist = abs(start_h-target[0]) + abs(start_w-target[1])
             if new_dist < dist:
                 dist = new_dist
                 min_dist_point = target
@@ -300,7 +298,7 @@ class ClosestLocationSearch:
         # and use uniform search cost to find optimal solution
         cover_problem = BlokusCoverProblem(self.board.board_w, self.board.board_h, self.board.piece_list,
                 self.start_pos, [min_dist_point])
-        actions = search.ucs(cover_problem)
+        actions = ucs(cover_problem)
         self.expanded = cover_problem.expanded
         targets.remove(min_dist_point)
 
@@ -315,7 +313,7 @@ class ClosestLocationSearch:
             cover_problem = BlokusCoverProblem(self.board.board_w, self.board.board_h, self.board.piece_list,
                     self.start_pos, [min_dist_point])
             cover_problem.board = current_state
-            actions += search.ucs(cover_problem)
+            actions += ucs(cover_problem)
             self.expanded += cover_problem.expanded
             targets.remove(min_dist_point)
 
@@ -324,7 +322,6 @@ class ClosestLocationSearch:
 
     def _get_closest_point(self, state):
         ''' returns the closest target point in the given state '''
-        import numpy as np
         points = list()
 
         # find remaining targets
@@ -335,13 +332,12 @@ class ClosestLocationSearch:
 
         dist = state.board_h + state.board_w
         distance_vec = [dist for i in range(len(points))] # initialize with high values
-        for height in range(state.board_h):
-            for width in range(state.board_w):
-                if state.state[height][width] != -1:
-                    for num, (i, j) in enumerate(points):
-                        new_dist = np.abs(height-i) + np.abs(width-j)
-                        if new_dist < distance_vec[num]:
-                            distance_vec[num] = new_dist
+        for height, width in _new_start(state):
+            if state.state[height][width] != -1:
+                for num, (i, j) in enumerate(points):
+                    new_dist = abs(height-i) + abs(width-j) + 1
+                    if new_dist < distance_vec[num]:
+                        distance_vec[num] = new_dist
         return points[distance_vec.index(min(distance_vec))]
 
 
