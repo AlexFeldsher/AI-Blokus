@@ -79,6 +79,7 @@ def depth_first_search(problem):
                     continue
                 fringe.push((successor, actions + [action]))
             closed.add(current)
+    return list()
 
 
 def breadth_first_search(problem):
@@ -103,6 +104,7 @@ def breadth_first_search(problem):
                     continue
                 fringe.push((successor, actions + [action]))
             closed.add(current)
+    return list()
 
 
 def uniform_cost_search(problem):
@@ -130,6 +132,7 @@ def uniform_cost_search(problem):
                 actions_dict[successor] = actions
             closed.add(current)
             del actions_dict[current]
+    return list()
 
 
 def null_heuristic(state, problem=None):
@@ -164,6 +167,7 @@ def a_star_search(problem, heuristic=null_heuristic):
                 actions_dict[successor] = actions
             closed.add(current)
             del actions_dict[current]
+    return list()
 
 
 # Abbreviations
