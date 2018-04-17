@@ -116,39 +116,14 @@ def blokus_corners_heuristic(state, problem):
     your heuristic is *not* consistent, and probably not admissible!  On the other hand,
     inadmissible or inconsistent heuristics may find optimal solutions, so be careful.
     """
-    INFTY = state.board_h*state.board_w 
     targets = list()
-
     # find remaining targets
-    for goal in problem.targets:
-        height, width = goal
+    for target in problem.targets:
+        height, width = target
         if state.state[height][width] == -1:
-            targets.append(goal)
+            targets.append(target)
+    return len(targets)
 
-    # find the minimal straight line distances to all the targets from the give state
-    # distance calculated with manhattan distance
-    dist = state.board_h + state.board_w
-    distance_vec = [dist for i in range(len(targets))] # initialize with high values
-    # iterate over valid "start positions"
-    for height, width in _new_start(state):
-        for num, (i, j) in enumerate(targets):
-            # +1 to add the cost of the start position cell
-            new_dist = abs(height-i) + abs(width-j) + 1
-            if new_dist < distance_vec[num]:
-                distance_vec[num] = new_dist
-    # sum all the distance BlokusCoverProblem(self.board.board_w, self.board.board_h,
-    total_distance = sum(distance_vec)
-
-    # measure the distance the remaining pieces can travel
-    # in the best case senario
-    reach = 0
-    for piece in state.piece_list:
-        piece_index = state.piece_list.pieces.index(piece)
-        if state.pieces[0, piece_index] == True:
-            reach += piece.get_num_tiles()
-    if reach < total_distance:
-        total_distance = INFTY
-    return total_distance
 
 def _get_corners(x, y, state):
     ''' Returns a list of valid corner position states on the board for the give (x,y) position
@@ -230,30 +205,12 @@ class BlokusCoverProblem(SearchProblem):
 
 def blokus_cover_heuristic(state, problem):
     targets = list()
-
     # find remaining targets
-    for goal in problem.targets:
-        height, width = goal
+    for target in problem.targets:
+        height, width = target
         if state.state[height][width] == -1:
-            targets.append(goal)
-
-    # find the max straight line distances to all the targets from the give state
-    # distance calculated with manhattan distance
-    dist = state.board_h + state.board_w
-    distance_vec = [dist for i in targets] # initialize with high values
-    for height, width in _new_start(state):
-        if state.state[height][width] != -1:
-            for num, (i, j) in enumerate(targets):
-                new_dist = abs(height-i) + abs(width-j) + 1
-                if new_dist < distance_vec[num]:
-                    distance_vec[num] = new_dist
-
-    # use the maximal distance
-    if distance_vec != []:
-        max_distance = max(distance_vec)
-    else:
-        max_distance = 0
-    return max_distance
+            targets.append(target)
+    return len(targets)
 
 class ClosestLocationSearch:
     """
@@ -350,8 +307,6 @@ class ClosestLocationSearch:
                     if new_dist < distance_vec[num]:
                         distance_vec[num] = new_dist
         return points[distance_vec.index(min(distance_vec))]
-
-
 
 
 class MiniContestSearch :
