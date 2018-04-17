@@ -114,24 +114,21 @@ def uniform_cost_search(problem):
     # fringe is a stack of tuples (state,  actions)
     # actions is a list of actions that led to that state from the start
     fringe = util.PriorityQueue()
-    fringe.push(problem.get_start_state(), 0)
+    fringe.push(PriorityTuple((problem.get_start_state(), list()), 0), 0)
     closed = set()
-    actions_dict = dict()
-    actions_dict[problem.get_start_state()] = list()
 
     while not fringe.isEmpty():
-        current = fringe.pop()
+        current, actions = fringe.pop()
         if problem.is_goal_state(current):
-            return actions_dict[current]
+            return actions
         elif current not in closed:
             for successor, action, _ in problem.get_successors(current):
                 if successor in closed:
                     continue
-                actions = actions_dict[current] + [action]
-                fringe.push(successor, problem.get_cost_of_actions(actions))
-                actions_dict[successor] = actions
+                new_actions = actions + [action]
+                cost = problem.get_cost_of_actions(new_actions)
+                fringe.push(PriorityTuple((successor, new_actions), cost), cost)
             closed.add(current)
-            del actions_dict[current]
     return list()
 
 
@@ -148,26 +145,39 @@ def a_star_search(problem, heuristic=null_heuristic):
     Search the node that has the lowest combined cost and heuristic first.
     """
     fringe = util.PriorityQueue()
-    fringe.push(problem.get_start_state(), 0)
+    fringe.push(PriorityTuple((problem.get_start_state(), list()), 0), 0)
     closed = set()
-    actions_dict = dict()
-    actions_dict[problem.get_start_state()] = list()
 
     while not fringe.isEmpty():
-        current = fringe.pop()
+        current, actions = fringe.pop()
         if problem.is_goal_state(current):
-            return actions_dict[current]
+            return actions
         elif current not in closed:
             for successor, action, _ in problem.get_successors(current):
                 if successor in closed:
                     continue
-                actions = actions_dict[current] + [action]
-                cost = problem.get_cost_of_actions(actions) + heuristic(successor, problem)
-                fringe.push(successor, cost)
-                actions_dict[successor] = actions
+                new_actions = actions + [action]
+                cost = problem.get_cost_of_actions(new_actions) + heuristic(successor, problem)
+                fringe.push(PriorityTuple((successor, new_actions), cost), cost)
             closed.add(current)
-            del actions_dict[current]
     return list()
+
+class PriorityTuple():
+
+    tup = None
+    priority = None
+
+    def __init__(self, tup, priority):
+        self.tup = tup
+        self.priority = priority
+
+    def __lt__(self, other):
+        return self.priority < other.priority
+
+    def __iter__(self):
+        for item in self.tup:
+            yield item
+
 
 
 # Abbreviations
