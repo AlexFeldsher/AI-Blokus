@@ -116,13 +116,38 @@ def blokus_corners_heuristic(state, problem):
     your heuristic is *not* consistent, and probably not admissible!  On the other hand,
     inadmissible or inconsistent heuristics may find optimal solutions, so be careful.
     """
+    INFTY = 100000
     targets = list()
     # find remaining targets
     for target in problem.targets:
         height, width = target
         if state.state[height][width] == -1:
             targets.append(target)
-    return len(targets)
+
+    if len(targets) == 0:
+        return 0
+
+    targets_distance = {target: INFTY for target in targets}
+    for start in _new_start(state):
+        for target in targets:
+            targets_distance[target] = min(targets_distance[target], _chebyshev_distance(start, target))
+    cost = targets_distance[max(targets_distance, key=targets_distance.get)]
+
+    '''
+    # make sure that the optimal solution is reachable
+    reach = 0
+    for piece in state.piece_list:
+        piece_index = state.piece_list.pieces.index(piece)
+        if state.pieces[0, piece_index] == True:
+            reach += piece.get_num_tiles()
+    if reach < cost:
+        cost = INFTY
+    '''
+
+    return cost
+
+def _chebyshev_distance(pos1, pos2):
+    return max(abs(pos1[0] - pos2[0]), abs(pos1[1] - pos2[1]))
 
 
 def _get_corners(x, y, state):
