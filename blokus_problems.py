@@ -131,7 +131,7 @@ def _get_corners(x, y, state):
     all_corners = [(x-1, y-1), (x-1, y+1), (x+1, y-1), (x+1, y+1)]
     # valid sides are position that don't step beyond the board size
     valid_corners = [i for i in all_corners if i[0] >= 0 and i[1] >= 0 and i[0] < state.board_h and i[1] < state.board_w]
-    return [state.state[i][j] for i,j in valid_corners]
+    return [state.state[i][j] for i, j in valid_corners]
 
 def _get_sides(x, y, state):
     ''' Returns a list of valid side position states on the board for the give (x,y) position
@@ -139,7 +139,7 @@ def _get_sides(x, y, state):
     all_sides = [(x, y-1), (x, y+1), (x+1, y), (x-1, y)]
     # valid sides are position that don't step beyond the board size
     valid_sides = [i for i in all_sides if i[0] >= 0 and i[1] >= 0 and i[0] < state.board_h and i[1] < state.board_w]
-    return [state.state[i][j] for i,j in valid_sides]
+    return [state.state[i][j] for i, j in valid_sides]
 
 def _new_start(state):
     ''' Iterator that returns valid board start positions for the given state
@@ -252,12 +252,10 @@ class ClosestLocationSearch:
         """
         targets = self.targets[:]
         # find closest point to the start position
-        start_h = self.start_pos[0]
-        start_w = self.start_pos[1]
         min_dist_point = self.targets[0]
-        dist = abs(start_h-min_dist_point[0]) + abs(start_w-min_dist_point[1])
+        dist = util.manhattanDistance(self.start_pos, min_dist_point)
         for target in self.targets:
-            new_dist = abs(start_h-target[0]) + abs(start_w-target[1])
+            new_dist = util.manhattanDistance(self.start_pos, target)
             if new_dist < dist:
                 dist = new_dist
                 min_dist_point = target
@@ -265,7 +263,7 @@ class ClosestLocationSearch:
         # define a new cover problem with the found point
         # and use uniform search cost to find optimal solution
         cover_problem = BlokusCoverProblem(self.board.board_w, self.board.board_h, self.board.piece_list,
-                self.start_pos, [min_dist_point])
+                                           self.start_pos, [min_dist_point])
         actions = ucs(cover_problem)
         self.expanded = cover_problem.expanded
         targets.remove(min_dist_point)
@@ -279,7 +277,7 @@ class ClosestLocationSearch:
 
             min_dist_point = self._get_closest_point(current_state)
             cover_problem = BlokusCoverProblem(self.board.board_w, self.board.board_h, self.board.piece_list,
-                    self.start_pos, [min_dist_point])
+                                               self.start_pos, [min_dist_point])
             cover_problem.board = current_state
             actions += ucs(cover_problem)
             self.expanded += cover_problem.expanded
@@ -290,23 +288,23 @@ class ClosestLocationSearch:
 
     def _get_closest_point(self, state):
         ''' returns the closest target point in the given state '''
-        points = list()
+        live_targets = list()
 
         # find remaining targets
-        for goal in self.targets:
-            height, width = goal
+        for target in self.targets:
+            height, width = target
             if state.state[height][width] == -1:
-                points.append(goal)
+                live_targets.append(target)
 
-        dist = state.board_h + state.board_w
-        distance_vec = [dist for pnt in points] # initialize with high values
-        for height, width in _new_start(state):
-            if state.state[height][width] != -1:
-                for num, (i, j) in enumerate(points):
-                    new_dist = abs(height-i) + abs(width-j) + 1
-                    if new_dist < distance_vec[num]:
-                        distance_vec[num] = new_dist
-        return points[distance_vec.index(min(distance_vec))]
+        max_dist = state.board_h + state.board_w
+        distance_vec = [max_dist for target in live_targets] # initialize with high values
+        for start in _new_start(state):
+            if state.state[start[0]][start[1]] != -1:
+                for i, target in enumerate(live_targets):
+                    new_dist = util.manhattanDistance(start, target) + 1
+                    if new_dist < distance_vec[i]:
+                        distance_vec[i] = new_dist
+        return live_targets[distance_vec.index(min(distance_vec))]
 
 
 class MiniContestSearch :
